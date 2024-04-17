@@ -6,10 +6,10 @@ const progressPercentTag = document.querySelectorAll(
 const progressWidth = document.querySelectorAll(
   ".our-skills .skill .the-progress span"
 );
-let animationStarted = false;
+let skillsAnimationStarted = false;
 
 const handleSkillsOnScroll = () => {
-  if (scrollY >= skillsSection.offsetTop - 100 && !animationStarted) {
+  if (scrollY >= skillsSection.offsetTop - 100 && !skillsAnimationStarted) {
     for (let i = 0; i < progressPercentTag.length; i++) {
       // Increase progress tag
       const progressData = parseInt(progressWidth[i].dataset.width);
@@ -17,13 +17,13 @@ const handleSkillsOnScroll = () => {
       // Increase progress width
       progressWidth[i].style.width = `${progressData}%`;
     }
-    animationStarted = true;
+    skillsAnimationStarted = true;
   }
 };
 
 // Increase progressPercentTag content
 const progressTagIncreaser = (percentTag, goal) => {
-  let countUp = setInterval(() => {
+  const countUp = setInterval(() => {
     let percentValue = parseInt(percentTag.textContent);
     percentTag.textContent = `${percentValue + 1}%`;
     if (percentValue == goal) clearInterval(countUp);
@@ -38,7 +38,7 @@ const hourSpan = document.querySelector(".events .time .hours");
 const minuteSpan = document.querySelector(".events .time .minutes");
 const secondSpan = document.querySelector(".events .time .seconds");
 
-function updateCountdown() {
+function updateEventCountdown() {
   const goalDate = new Date("Dec 31, 2024 23:59:59").getTime();
   const nowDate = new Date().getTime();
   const diffDate = goalDate - nowDate;
@@ -59,7 +59,32 @@ function updateCountdown() {
   if (diffDate <= 0) clearInterval(eventCountDown);
 }
 
-const eventCountDown = setInterval(updateCountdown, 1000);
+const eventCountDown = setInterval(updateEventCountdown, 1000);
 
 // Display them immediately
-updateCountdown();
+updateEventCountdown();
+
+// Stats functionality
+let stats = document.querySelector(".stats");
+let numberSpan = document.querySelectorAll(".stats .box .number");
+let statsAnimationStarted = false;
+
+function updateStatsCountUp() {
+  if (scrollY >= stats.offsetTop - 100 && !statsAnimationStarted) {
+    numberSpan.forEach((span, index) => countUpInterval(span, index));
+    statsAnimationStarted = true;
+  }
+
+  function countUpInterval(element, index) {
+    const goal = parseInt(element.dataset.stats);
+    const countUp = setInterval(() => {
+      element.textContent =
+        parseInt(element.textContent) + 1 + (index === 3 ? "K" : "");
+
+      // Stop the counter when it's finished
+      if (parseInt(element.textContent) == goal) clearInterval(countUp);
+    }, 500 / goal);
+  }
+}
+
+window.addEventListener("scroll", updateStatsCountUp);
